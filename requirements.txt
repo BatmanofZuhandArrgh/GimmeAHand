@@ -1,2 +1,5 @@
 ultralytics
 pandas
+torch==2.0.1 #torch2.1 has compatibility issues with yolov8
+torchvision==0.15.2
+torchaudio==2.0.2
