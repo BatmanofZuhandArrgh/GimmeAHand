@@ -8,7 +8,7 @@ runs/*
 # C extensions
 *.so
 robot_env/*
-
+cam_calibrate/calib_img/*
 
 # Distribution / packaging
 .Python
