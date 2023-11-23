@@ -14,18 +14,32 @@ def load_mat(outfile):
     return loaded_data
     
 
-CHECKERBOARD = (7,6)
+CHECKERBOARD = (8,6)
+CELL_SIZE = 24.4
+INIT_X = -122.0 / 2
+INIT_Y = 61.5
+# INIT_Z = 250.0
 # termination criteria
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
 objp = np.zeros((1, CHECKERBOARD[0]*CHECKERBOARD[1],3), np.float32)
-objp[0, :,:2] = np.mgrid[0:CHECKERBOARD[0],0:CHECKERBOARD[1]].T.reshape(-1,2)
+# objp[0, :, :2] = np.mgrid[0:CHECKERBOARD[0],0:CHECKERBOARD[1]].T.reshape(-1,2)
+# Edit: adjust coordinate based on mm (origin is below camera)
+for j in range(CHECKERBOARD[0]):
+    for i in range(CHECKERBOARD[1]):
+        m = CHECKERBOARD[1] - i - 1
+        n = CHECKERBOARD[0] - j - 1
+        idx = m * CHECKERBOARD[0] + n
+        objp[0, idx, 0] = i * CELL_SIZE + INIT_X
+        objp[0, idx, 1] = j * CELL_SIZE + INIT_Y
+# objp[0, :, 0] = objp[0, :, 0] * CELL_SIZE + INIT_X
+# objp[0, :, 1] = -1 * (objp[0, :, 1] * CELL_SIZE + INIT_Y)
 # Arrays to store object points and image points from all the images.
 objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
 
-images = glob.glob('cam_calibrate/calib_img/*.png')
+images = glob.glob('cam_calibrate/calib_img/*.jpg')
 
 for fname in images:
     img = cv.imread(fname)
@@ -54,8 +68,8 @@ save_mat(mtx)
 intrinsic_mat = load_mat(out_intrinsic)
 print(intrinsic_mat)
 
-print(rvecs)
-print(tvecs)
+# print(rvecs)
+# print(tvecs)
 
 # save_mat()
 

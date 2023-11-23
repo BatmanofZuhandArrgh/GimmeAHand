@@ -4,10 +4,11 @@ import os
 def capture_images(outfolder = 'cam_calibrate/calib_img'):
     # Open the webcam
     cap = cv2.VideoCapture(0)  # 0 represents the default camera (you may need to change it if you have multiple cameras)
-    index = 0
+    index = 0 
     while True:
         # Capture frame-by-frame
         ret, frame = cap.read()
+-+++++
 
         # Display the frame
         cv2.imshow('Webcam', frame)
