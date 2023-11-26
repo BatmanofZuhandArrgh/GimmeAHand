@@ -46,52 +46,16 @@ pca.frequency = 50
 # max_pulse can go to 2500 or more
 MIN_PULSE = 400
 MAX_PULSE = 2400
+index0 = 0 *4
 index1 = 1 *4
 index2 = 2 *4
 index3 = 3 *4
+
+# Servo 0 turn left right, Servo 1 and 2 turn up down, Servo 3 is end effector
+servo0 = servo.Servo(pca.channels[index1], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
 servo1 = servo.Servo(pca.channels[index1], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
 servo2 = servo.Servo(pca.channels[index2], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
 servo3 = servo.Servo(pca.channels[index3], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
-
-# We sleep in the loops to give the servo time to move into position.
-'''
-servo3.angle=50
-time.sleep(2)
-servo2.angle =40 #Input is actual degree
-time.sleep(2)
-servo1.angle =180 #Input is actual degree
-time.sleep(2)
-'''
-
-'''
-for i in range(180):
-    print(i)
-    servo.angle = i
-    #print('servo',servo.angle)
-    time.sleep(0.03)
-'''
-
-'''
-print('servo1', servo1.angle)
-print('servo2', servo2.angle)
-print('servo3', servo3.angle)
-'''
-
-# Relax Servo
-'''
-servo1.angle = None
-servo2.angle = None
-servo3.angle = None
-'''
-
-# Write function to convert 3D to 2D
-def get_2d_from_3d(x, y, z):
-    return None, None
-
-# 3D coordinates
-x = None
-y = None
-z = None
 
 # Step 1: Go to default position
 servo3.angle = 50
@@ -108,6 +72,12 @@ servo0.angle = None
 time.sleep(1)
 
 # Step 3: Convert 3D bottle coordinates to 2D coordinates for servo1 and servo2
+x = None
+y = None
+z = None
+def get_2d_from_3d(x, y, z):
+    return None, None
+    
 servo1_deg, servo2_deg = get_2d_from_3d(x,y,z)
 
 # Step 4: Turn (Use planning)
@@ -132,6 +102,9 @@ time.sleep(1)
 servo3.angle = 50
 time.sleep(1)
 
+
+pca.deinit()
+
 '''
 Default: servo0 = 103, servo1 = 180, servo2 = 60, servo3 = 50
 Servo 0: for the default set, straight ahead, basic position is deg = 103
@@ -148,25 +121,3 @@ Limit 2:
 Another config: servo1 = 180 (max) and servo2 = 40 (min)
 
 '''
-
-
-
-
-
-
-
-#for i in [0, 30, 45, 60]:
-#    servo7.angle = i
- #   time.sleep(1)
-#for i in range(180):
-#    servo7.angle = 180 - i
-#    time.sleep(0.03)
-
-# You can also specify the movement fractionally.
-#fraction = 0.0
-#while fraction < 1.0:
-#    servo7.fraction = fraction
-#    fraction += 0.01
-#    time.sleep(0.03)
-
-pca.deinit()
