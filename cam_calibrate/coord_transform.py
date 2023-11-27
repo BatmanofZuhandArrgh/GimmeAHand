@@ -37,14 +37,12 @@ def calculate_world_coord(u, v, intrinsic_mat, target_z = 250.0):
 	return world_coord
 
 
-out_intrinsic = 'cam_calibrate/intrinsic_mat.pkl'
-intrinsic_mat = load_intrinsic_mat(out_intrinsic)
+if __name__ == "__main__":
+	out_intrinsic = 'cam_calibrate/intrinsic_mat.pkl'
+	intrinsic_mat = load_intrinsic_mat(out_intrinsic)
+	# u, v = 1296, 972
+	u = int(input("Input u: "))
+	v = int(input("Input v: "))
+	target_z = 250.0 # 250 mm
 
-# u, v = 1296, 972
-print("Input u: ", end="")
-u = int(input())
-print("Input v: ", end="")
-v = int(input())
-
-target_z = 250.0 # 250 mm
-print(calculate_world_coord(u, v, intrinsic_mat, target_z))
+	print(calculate_world_coord(u, v, intrinsic_mat, target_z))
