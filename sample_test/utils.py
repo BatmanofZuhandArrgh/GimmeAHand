@@ -14,16 +14,16 @@ def coord_robot_to_servo(coord_robot: CoordRobot):
     # Value of turn_dir is either 1 or -1
     turn_dir_0 = 1
     turn_dir_1 = 1
-    turn_dir_2 = 1
+    turn_dir_2 = -1
 
     # Offsets
     servo0_offset = 103
     servo1_offset = 160 # Not sure, the value is same as servo value that makes servo 1 go vertical
     servo2_offset = 180
 
-    servo0 = theta_1 + servo0_offset*turn_dir_0
-    servo1 = theta_2 + servo1_offset*turn_dir_1
-    servo2 = theta_3 + servo2_offset*turn_dir_2
+    servo0 = servo0_offset + turn_dir_0*theta_1
+    servo1 = servo1_offset + turn_dir_1*theta_2
+    servo2 = servo2_offset + turn_dir_2*theta_3
 
     if servo0 < 0 or servo0 > 180:
         return None
