@@ -1,16 +1,16 @@
 import numpy as np
 import pickle
-from coord import CoordPixel, Coord3D
+from cam_calibrate.coord import CoordPixel, Coord3D
 
 
 class CamCoordTransformer:
 	def __init__(
 			self,
-			cam_offset: Coord3D,
+			cam_offset: Coord3D = Coord3D(88, 68, 72),
 			cam_angle: float = 20.0, 
 			intrinsic_mat_file: str = None,
-			pixel_width: int = 2592,
-			pixel_height: int = 1944,
+			pixel_width: int = 640, #2592,
+			pixel_height: int = 480, #1944,
 	):
 		'''
 		cam_offset: offset in mm from the actually world coordinate origin
@@ -21,15 +21,17 @@ class CamCoordTransformer:
 		self.intrinsic_mat = self.load_intrinsic_mat(intrinsic_mat_file, pixel_width, pixel_height)
 		self.rotation_mat = self.get_rotation_mat(cam_angle)
 
-	def load_intrinsic_mat(self, mat_file: str = None, pixel_width: int = 2592, pixel_height: int = 1944):
+	def load_intrinsic_mat(self, mat_file: str, pixel_width: int, pixel_height: int):
 		"""mat_file: path to pickled intrinsic matrix file (if None, use f=2500 based on measured intrinsic matrix)"""
 		mat = None
 		if mat_file is None:
 			cam_f = 2500.0
+			fx = cam_f / 2592.0 * pixel_width
+			fy = cam_f / 1944.0 * pixel_height
 			mat = np.array([
-				[cam_f,   0.0,   0.0],
-				[  0.0, cam_f,   0.0],
-				[  0.0,   0.0,   1.0],
+				[  fx, 0.0, 0.0],
+				[ 0.0,  fy, 0.0],
+				[ 0.0, 0.0, 1.0],
 			])
 		else:
 			with open(mat_file, "rb") as f:
@@ -40,7 +42,7 @@ class CamCoordTransformer:
 		mat[1, 2] = (pixel_height - 1) / 2.0
 		return mat
 
-	def get_rotation_mat(self, cam_angle: float = 20.0):
+	def get_rotation_mat(self, cam_angle: float):
 		"""camera_angle: degree compared to vertical axis (default to 20 degree based on measured extrinsic matrix)"""
 		s = np.sin(np.deg2rad(cam_angle))
 		c = np.cos(np.deg2rad(cam_angle))
@@ -66,8 +68,7 @@ class CamCoordTransformer:
 
 
 if __name__ == "__main__":
-	cam_offset = Coord3D(0, 0, 0)
-	cam_coord_transformer = CamCoordTransformer(cam_offset)
+	cam_coord_transformer = CamCoordTransformer()
 	u = int(input("Input u: "))
 	v = int(input("Input v: "))
 	pixel_coord = CoordPixel(u, v) # pixel
