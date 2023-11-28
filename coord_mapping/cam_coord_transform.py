@@ -1,6 +1,6 @@
 import numpy as np
 import pickle
-from cam_calibrate.coord import CoordPixel, Coord3D
+from coord_mapping.coord import CoordPixel, Coord3D
 
 
 class CamCoordTransformer:

@@ -135,7 +135,7 @@ time.sleep(1)
 '''
 Default: servo0 = 103, servo1 = 180, servo2 = 60, servo3 = 50
 Servo 0: for the default set, straight ahead, basic position is deg = 103
-Servo 1: min deg = 45 (if no obstruction), default def = 180 (also max)
+Servo 1: min deg = 45 (if no obstruction), default = max = 180 
 Servo 2: 
 Servo 3 (end effector): max deg = 90 (close), min deg = 50 (open)
 

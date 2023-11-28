@@ -1,6 +1,6 @@
 import numpy as np
-from cam_calibrate.coord import Coord3D, CoordRobot
-from cam_calibrate.dh_params import RobotDHParams
+from coord_mapping.coord import Coord3D, CoordRobot
+from coord_mapping.dh_params import RobotDHParams
 
 
 class RobotCoordTransformer:
