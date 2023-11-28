@@ -4,9 +4,17 @@ from coord import CoordPixel, Coord3D
 
 
 class CamCoordTransformer:
-	def __init__(self, camera_angle: float = 20.0, intrinsic_mat_file: str = None, pixel_width: int = 2592, pixel_height: int = 1944):
+	def __init__(
+			self,
+			cam_offset: Coord3D,
+			cam_angle: float = 20.0,
+			intrinsic_mat_file: str = None,
+			pixel_width: int = 2592,
+			pixel_height: int = 1944,
+	):
+		self.cam_offset = cam_offset
 		self.intrinsic_mat = self.load_intrinsic_mat(intrinsic_mat_file, pixel_width, pixel_height)
-		self.rotation_mat = self.get_rotation_mat(camera_angle)
+		self.rotation_mat = self.get_rotation_mat(cam_angle)
 
 	def load_intrinsic_mat(self, mat_file: str = None, pixel_width: int = 2592, pixel_height: int = 1944):
 		""" mat_file: path to pickled intrinsic matrix file (if None, use f=2500 based on measured intrinsic matrix) """
@@ -25,10 +33,10 @@ class CamCoordTransformer:
 		mat[1, 2] = (pixel_height - 1) / 2.0
 		return mat
 
-	def get_rotation_mat(self, camera_angle: float = 20.0):
+	def get_rotation_mat(self, cam_angle: float = 20.0):
 		""" camera_angle: degree compared to vertical axis (default to 20 degree based on measured extrinsic matrix) """
-		s = np.sin(np.deg2rad(camera_angle))
-		c = np.cos(np.deg2rad(camera_angle))
+		s = np.sin(np.deg2rad(cam_angle))
+		c = np.cos(np.deg2rad(cam_angle))
 		mat = np.array([
 			[1.0, 0.0, 0.0],
 			[0.0,  -c,  -s],
@@ -44,12 +52,15 @@ class CamCoordTransformer:
 		cam_coord = cam_coord / cam_coord[2] * target_z
 		world_coord = np.matmul(np.linalg.inv(self.rotation_mat), cam_coord)
 		world_coord = world_coord / world_coord[2] * target_z * -1.0
-		result = Coord3D(x=world_coord[0], y=world_coord[1], z=world_coord[2])
-		return result
+		x = world_coord[0] + self.cam_offset.x
+		y = world_coord[1] + self.cam_offset.y
+		z = world_coord[2] + self.cam_offset.z
+		return Coord3D(x, y, z)
 
 
 if __name__ == "__main__":
-	cam_coord_transformer = CamCoordTransformer(intrinsic_mat_file="cam_calibrate/intrinsic_mat.pkl")
+	cam_offset = Coord3D(0, 0, 0)
+	cam_coord_transformer = CamCoordTransformer(cam_offset)
 	u = int(input("Input u: "))
 	v = int(input("Input v: "))
 	pixel_coord = CoordPixel(u, v) # pixel

@@ -4,9 +4,6 @@ from dh_params import RobotDHParams
 
 
 class RobotCoordTransformer:
-    def __init__(self, cam_offset: Coord3D):
-        self.cam_offset = cam_offset
-
     def solve_two_arms_angles(self, a: float, b: float, d: float, h: float) -> (float, float):
         """solve for angles phi_1 (of joint 2) and phi_2 (of joint 3) compared to horizontal
         a*c1 + b*c2 = d
@@ -25,9 +22,9 @@ class RobotCoordTransformer:
 
     def world_to_robot_coord(self, world_coord: Coord3D) -> CoordRobot:
         """convert world 3D coord (origin at base of camera) to robot operational coord"""
-        x1 = world_coord.x + self.cam_offset.x
-        y1 = world_coord.y + self.cam_offset.y - RobotDHParams.d(1)
-        z1 = world_coord.z + self.cam_offset.z - RobotDHParams.a(0)
+        x1 = world_coord.x
+        y1 = world_coord.y - RobotDHParams.d(1)
+        z1 = world_coord.z - RobotDHParams.a(0)
         theta_1 = None
         if z1 == 0 and x1 == 0:
             return None
@@ -50,7 +47,7 @@ class RobotCoordTransformer:
 
 
 if __name__ == "__main__":
-    robot_coord_transformer = RobotCoordTransformer(cam_offset=Coord3D(0, 0, 0))
+    robot_coord_transformer = RobotCoordTransformer()
     x = int(input("Input x: "))
     y = int(input("Input y: "))
     z = int(input("Input z: "))
