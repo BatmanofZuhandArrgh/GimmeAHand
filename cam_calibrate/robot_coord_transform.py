@@ -5,13 +5,17 @@ from dh_params import RobotDHParams
 
 class RobotCoordTransformer:
     def solve_two_arms_angles(self, a: float, b: float, d: float, h: float) -> (float, float):
-        """solve for angles phi_1 (of joint 2) and phi_2 (of joint 3) compared to horizontal
+        """solve for angles phi_1 (of joint 2) and phi_2 (of joint 3) compared to horizontal 
+        phi is used to solve configurations, not to be mistakened for theta
+        
         a*c1 + b*c2 = d
         a*s1 + b*s2 = h
-        phi_1: 0 -> 180 degree
-        phi_2: -90 -> 90 degree
-        always select the solution where phi_1 >= phi_2"""
-        s1a = (d*d + h*h + a*a - b*b) / (2*a*np.sqrt(d*d + h*h))
+        phi_1: 0 -> 180 degree, 0 when arm is front forward horizontal, 90 when it is vertical 
+        phi_2: -90 -> 90 degree, 0 when arm is front forward horizontal, 90 when it is vertical 
+        always select the solution where phi_1 >= phi_2
+        #Please add link explanation
+        """ 
+        s1a = (d*d + h*h + a*a - b*b) / (2*a*np.sqrt(d*d + h*h)) 
         s2a = (d*d + h*h + b*b - a*a) / (2*b*np.sqrt(d*d + h*h))
         if np.absolute(s1a) > 1 or np.absolute(s2a) > 1:
             return None, None
@@ -21,10 +25,12 @@ class RobotCoordTransformer:
         return phi_1, phi_2
 
     def world_to_robot_coord(self, world_coord: Coord3D) -> CoordRobot:
-        """convert world 3D coord to robot operational coord"""
+        """convert target object's world 3D coord to find robot operational coord"""
+        """3D coordinate (x: left->right, y: bottom->top, z: far->near)"""
+        # Target object coordinate translated to the coordinate system at joint 1
         x1 = world_coord.x
-        y1 = world_coord.y - RobotDHParams.d(1)
-        z1 = world_coord.z - RobotDHParams.a(0)
+        y1 = world_coord.y - RobotDHParams.d(1) # RobotDHParams.d(1) = 50.4  mm
+        z1 = world_coord.z - RobotDHParams.a(0) # RobotDHParams.a(0) = 39.56 mm
         theta_1 = None
         if z1 == 0 and x1 == 0:
             return None

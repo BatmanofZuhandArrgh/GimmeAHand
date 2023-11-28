@@ -7,11 +7,16 @@ class CamCoordTransformer:
 	def __init__(
 			self,
 			cam_offset: Coord3D,
-			cam_angle: float = 20.0,
+			cam_angle: float = 20.0, 
 			intrinsic_mat_file: str = None,
 			pixel_width: int = 2592,
 			pixel_height: int = 1944,
 	):
+		'''
+		cam_offset: offset in mm from the actually world coordinate origin
+		cam_angle: pitch of camera from horizontal axis
+		intrinsic_mat_file: path to pickled intrinsic matrix file 
+		'''
 		self.cam_offset = cam_offset
 		self.intrinsic_mat = self.load_intrinsic_mat(intrinsic_mat_file, pixel_width, pixel_height)
 		self.rotation_mat = self.get_rotation_mat(cam_angle)
@@ -29,6 +34,8 @@ class CamCoordTransformer:
 		else:
 			with open(mat_file, "rb") as f:
 				mat = np.array(pickle.load(f))
+
+		# cx, cy assigned with actual center of the image
 		mat[0, 2] = (pixel_width - 1) / 2.0
 		mat[1, 2] = (pixel_height - 1) / 2.0
 		return mat
@@ -37,7 +44,7 @@ class CamCoordTransformer:
 		"""camera_angle: degree compared to vertical axis (default to 20 degree based on measured extrinsic matrix)"""
 		s = np.sin(np.deg2rad(cam_angle))
 		c = np.cos(np.deg2rad(cam_angle))
-		mat = np.array([
+		mat = np.array([   #TODO verifyy
 			[1.0, 0.0, 0.0],
 			[0.0,  -c,  -s],
 			[0.0,   s,  -c],
