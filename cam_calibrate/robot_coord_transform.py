@@ -21,7 +21,7 @@ class RobotCoordTransformer:
         return phi_1, phi_2
 
     def world_to_robot_coord(self, world_coord: Coord3D) -> CoordRobot:
-        """convert world 3D coord (origin at base of camera) to robot operational coord"""
+        """convert world 3D coord to robot operational coord"""
         x1 = world_coord.x
         y1 = world_coord.y - RobotDHParams.d(1)
         z1 = world_coord.z - RobotDHParams.a(0)
@@ -44,6 +44,24 @@ class RobotCoordTransformer:
         theta_2 = phi_1 - 90.0
         theta_3 = phi_1 - phi_2
         return CoordRobot(theta_1, theta_2, theta_3)
+
+    def robot_to_world_coord(self, robot_coord: CoordRobot) -> Coord3D:
+        """convert robot operational coord to world 3D coord"""
+        phi_1 = robot_coord.theta_2 + 90.0
+        phi_2 = phi_1 - robot_coord.theta_3
+        a = RobotDHParams.a(2)
+        b = RobotDHParams.a(3)
+        d = a * np.cos(np.deg2rad(phi_1)) + b * np.cos(np.deg2rad(phi_2))
+        h = a * np.sin(np.deg2rad(phi_1)) + b * np.sin(np.deg2rad(phi_2))
+        x = -1 * (d - RobotDHParams.a(1)) * np.sin(np.deg2rad(robot_coord.theta_1))
+        y = h + RobotDHParams.d(2) + RobotDHParams.d(1)
+        z = -1 * (d - RobotDHParams.a(1)) * np.cos(np.deg2rad(robot_coord.theta_1)) + RobotDHParams.a(0)
+        return Coord3D(x, y, z)
+
+    def is_above_ground(self, robot_coord: CoordRobot) -> bool:
+        """check if robot config coord is above ground"""
+        world_coord = self.robot_to_world_coord(robot_coord)
+        return world_coord.y >= 0
 
 
 if __name__ == "__main__":

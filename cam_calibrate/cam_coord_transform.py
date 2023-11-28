@@ -17,7 +17,7 @@ class CamCoordTransformer:
 		self.rotation_mat = self.get_rotation_mat(cam_angle)
 
 	def load_intrinsic_mat(self, mat_file: str = None, pixel_width: int = 2592, pixel_height: int = 1944):
-		""" mat_file: path to pickled intrinsic matrix file (if None, use f=2500 based on measured intrinsic matrix) """
+		"""mat_file: path to pickled intrinsic matrix file (if None, use f=2500 based on measured intrinsic matrix)"""
 		mat = None
 		if mat_file is None:
 			cam_f = 2500.0
@@ -34,7 +34,7 @@ class CamCoordTransformer:
 		return mat
 
 	def get_rotation_mat(self, cam_angle: float = 20.0):
-		""" camera_angle: degree compared to vertical axis (default to 20 degree based on measured extrinsic matrix) """
+		"""camera_angle: degree compared to vertical axis (default to 20 degree based on measured extrinsic matrix)"""
 		s = np.sin(np.deg2rad(cam_angle))
 		c = np.cos(np.deg2rad(cam_angle))
 		mat = np.array([
@@ -45,7 +45,7 @@ class CamCoordTransformer:
 		return mat
 
 	def pixel_to_world_coord(self, pixel_coord: CoordPixel, target_z: float) -> Coord3D:
-		""" convert pixel coord to world 3D coord (origin is at the base of the camera position, target depth must be given) """
+		"""convert pixel coord to world 3D coord (target depth must be given)"""
 		target_z = np.absolute(target_z)
 		img_coord = np.array([pixel_coord.u, pixel_coord.v, 1.0])
 		cam_coord = np.matmul(np.linalg.inv(self.intrinsic_mat), img_coord)
