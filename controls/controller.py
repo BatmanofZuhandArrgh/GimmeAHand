@@ -11,14 +11,16 @@ from adafruit_pca9685 import PCA9685
 MIN_PULSE = 400
 MAX_PULSE = 2400
 
-#Angles of joints when default offline (resting, not holding anything) and online (carrying the bottle)
+# Angles of joints when default offline (resting, not holding anything) and online (carrying the bottle)
 OFFLINE_DEFAULT_1 = 103
 OFFLINE_DEFAULT_2 = 180 
-OFFLINE_DEFAULT_3 = 40  #TODO be tuned
+OFFLINE_DEFAULT_3 = 50 #TODO to be tuned, then rested 
 
-ONLINE_DEFAULT_1 = 103
-ONLINE_DEFAULT_2 = None #TODO be tuned
-ONLINE_DEFAULT_3 = None #TODO be tuned
+ONLINE_DEFAULT_2 = 180 #TODO be tuned, 
+ONLINE_DEFAULT_3 = None #TODO be tuned, 75, third arm is horizontal
+
+# Assumed position of the user
+USER_POSITION_1 = 180
 
 class Controller:
     def __init__(self) -> None:
@@ -64,10 +66,11 @@ class Controller:
 
     def motor_relax(self, motor_id):
         self.servos[motor_id].angle = None
-
-    def emergency_motor_relax(self):
+        
+    def all_motor_relax(self):
         for id in self.motor_ids:
             self.servos[id].angle = None
+            time.sleep(1)
 
     def open_ee(self):
         self.servos['ee'] = 50 # max opening

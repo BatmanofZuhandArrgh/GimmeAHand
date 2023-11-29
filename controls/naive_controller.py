@@ -4,50 +4,82 @@ sys.path.append(os.path.dirname(sys.path[0])) #Add the main dir to the import di
 print('path: ', sys.path[-1])
 
 import time
-from controls.controller import Controller, OFFLINE_DEFAULT_1, OFFLINE_DEFAULT_2, OFFLINE_DEFAULT_3
+from controls.controller import Controller, OFFLINE_DEFAULT_1, OFFLINE_DEFAULT_2, OFFLINE_DEFAULT_3, \
+    ONLINE_DEFAULT_2, ONLINE_DEFAULT_3, USER_POSITION_1
 from motor.motor_utils import Servo
 
+INTERVAL = 2 #seconds
+
+#Assume no obstruction except for ground
 class NaiveController(Controller):
     def __init__(self):
         super().__init__()
 
     def naive_reach(self):
-        self.servos['3'] = self.target_angle3
-        time.sleep(2)
-        self.servos['2'] = self.target_angle2
-        time.sleep(2)
+        # From the offline default position 2 and 3, reach towards the target obj
+        self.servos['3'].angle = self.target_angle3
+        time.sleep(INTERVAL)
+        self.servos['2'].angle = self.target_angle2
+        time.sleep(INTERVAL)
 
     def naive_retract(self):
-        #Return to online default position 
-        pass
+        #After grasping, return to online default position 
+        self.servos['3'].angle = ONLINE_DEFAULT_3
+        time.sleep(INTERVAL)
+        self.servos['2'].angle = ONLINE_DEFAULT_2
+        time.sleep(INTERVAL)
 
     def naive_deliver(self):
-        
-        pass
+        #From online default position, turn to the user and deliver the target obj
+        self.servos['1'].angle = USER_POSITION_1
+        time.sleep(INTERVAL)
+
+        self.open_ee()
+        time.sleep(INTERVAL)
     
     def naive_return(self):
-        pass
+        #After delivering, return to offline default position
+        self.servos['1'].angle = OFFLINE_DEFAULT_1
+        time.sleep(INTERVAL)
+        
+        self.all_motor_relax()
 
     def reset(self):
-        # Back to offline default position
-        self.servos['2'] = self.target_angle2
-        time.sleep(2)
+        #From any (simple) position, back to offline default position from any position
+        #Possibly causes huge torque requirements at servo 2, really bad
+        self.servos['2'].angle = OFFLINE_DEFAULT_2
+        time.sleep(INTERVAL)
 
-    def grasp(self):
-        self.close_ee()
+        self.servos['3'].angle = OFFLINE_DEFAULT_3
+        time.sleep(INTERVAL)
 
+        self.servos['1'].angle = OFFLINE_DEFAULT_1
+        time.sleep(INTERVAL)
+
+        self.all_motor_relax()
+    
     def execute(self, servo_angles: Servo):
         super().execute(servo_angles)
         print(self.target_angle1, self.target_angle2, self.target_angle3)
 
+        # Turning the robot towards the target object
         self.servos['1'].angle = self.target_angle1
 
         self.naive_reach()
 
         self.grasp()
 
+        self.naive_retract()
 
+        self.naive_deliver()
+
+        self.naive_return()
+
+        self.end_routine()
+
+    def grasp(self):
+        self.close_ee()
 
 if __name__ == '__main__':
     controller = NaiveController()
-    controller.execute(Servo(0,1,2))
+    controller.execute(Servo(None,None,None))
