@@ -1,10 +1,11 @@
 import os
 from detection.objdet import obj_det
-from coord_mapping.coord import CoordPixel, Coord3D, CoordRobot
+from coord_mapping.coord import CoordPixel, Coord3D, CoordRobot #Probably find a way to clean this up
 from coord_mapping.cam_coord_transform import CamCoordTransformer
 from coord_mapping.robot_coord_transform import RobotCoordTransformer
 from motor.motor_utils import robot_coord_to_servo
-from controls.controller import Controller
+from controls.naive_controller import NaiveController
+from controls.planned_controller import PlannedController
 
 def run(
 	target_obj = 75,
@@ -38,11 +39,19 @@ def run(
 	###4. Target Motor Angle: From target robot angles in kinematics, infer target angles to be input in motors
 	servo_angles = robot_coord_to_servo(robot_coord)
 	print(servo_angles)
-
-	###5. Execute plan
-	controller = Controller(planning=planning)
+	
+	
+	###5. Execute
+	if planning == 'naive':
+		controller = NaiveController()
+	else:
+		# sequence = Planner.do_something()
+		# controller = PlannedController(sequence)
+		raise NotImplemented
+	
 	controller.execute()
 	
+	print('Donezo')
 	
 if __name__ == "__main__":
 	run()

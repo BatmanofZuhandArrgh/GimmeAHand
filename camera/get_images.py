@@ -8,7 +8,6 @@ def capture_images(outfolder = 'cam_calibrate/calib_img'):
     while True:
         # Capture frame-by-frame
         ret, frame = cap.read()
--+++++
 
         # Display the frame
         cv2.imshow('Webcam', frame)
