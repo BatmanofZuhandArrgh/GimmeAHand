@@ -14,7 +14,7 @@ MAX_PULSE = 2400
 # Angles of joints when default offline (resting, not holding anything) and online (carrying the bottle)
 OFFLINE_DEFAULT_1 = 103
 OFFLINE_DEFAULT_2 = 180 
-OFFLINE_DEFAULT_3 = 50 #TODO to be tuned, then rested 
+OFFLINE_DEFAULT_3 = 60 #TODO to be tuned, then rested 
 
 ONLINE_DEFAULT_2 = 180 #TODO be tuned, 
 ONLINE_DEFAULT_3 = None #TODO be tuned, 75, third arm is horizontal
