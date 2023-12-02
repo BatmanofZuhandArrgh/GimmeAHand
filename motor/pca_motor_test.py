@@ -51,7 +51,7 @@ MAX_PULSE = 2400
 index1 = 1 *4
 index2 = 2 *4
 index3 = 3 *4
-servo1 = servo.Servo(pca.channels[index1], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
+servo1 = servo.Servo(pca.channels[index1], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE) #actuation range
 servo2 = servo.Servo(pca.channels[index2], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
 servo3 = servo.Servo(pca.channels[index3], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
 

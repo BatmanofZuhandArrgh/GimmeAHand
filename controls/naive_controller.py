@@ -7,7 +7,8 @@ import time
 from controls.controller import Controller, OFFLINE_DEFAULT_1, OFFLINE_DEFAULT_2, OFFLINE_DEFAULT_3, \
     ONLINE_DEFAULT_2, ONLINE_DEFAULT_3, USER_POSITION_1
 from controls.controls_utils import run_motor
-from motor.motor_utils import Servo
+from motor.motor_utils import Servo #, robot_coord_to_servo
+#from coord_mapping.robot_coord_transform import RobotCoordTransformer
 
 INTERVAL = 2 #seconds
 
@@ -15,7 +16,34 @@ INTERVAL = 2 #seconds
 class NaiveController(Controller):
     def __init__(self):
         super().__init__()
+    
+    def segmented_reach(self, num_intervals = 10):
+        '''
+        For motor 2 and 3, move in a segmented way to reduce jerk motion and induce small changes, 
+        leading to require less reaching precision (does that make sense? 
+        basically, the ee is missing the object by really small diff by now, 
+        so gently grasping it in a ziczac way so the bottle would slide into the ee is useful) 
+        '''
 
+        seg_seq_2 = []
+        seg_seq_3 = []
+        for i in range(0, num_intervals):
+            seg_seq_2.append(ONLINE_DEFAULT_2 + (self.target_angle2 -  ONLINE_DEFAULT_2)*i/num_intervals)
+            time.sleep(1)
+            seg_seq_3.append(ONLINE_DEFAULT_3 + (self.target_angle3 -  ONLINE_DEFAULT_3)*i/num_intervals)
+            time.sleep(1)
+            
+        seg_seq_2.append(self.target_angle2)
+        seg_seq_3.append(self.target_angle3)
+        print('2: ',seg_seq_2)
+        print('3: ',seg_seq_3)
+        
+        for i in range(len(seg_seq_2)-1):
+                run_motor(self.servos['3'], target_angle=seg_seq_3[i+1], current_angle=seg_seq_3[i], interval = 0.05)
+                time.sleep(0.5)
+                run_motor(self.servos['2'], target_angle=seg_seq_2[i+1], current_angle=seg_seq_2[i], interval = 0.05)
+                time.sleep(0.5)
+                
     def naive_reach(self):
         # From the offline default position 2 and 3, reach towards the target obj
   
@@ -115,7 +143,8 @@ class NaiveController(Controller):
         
         print('angle servo 1')
         
-        self.naive_reach()
+        #self.naive_reach()
+        self.segmented_reach()
         print('reach')
         time.sleep(INTERVAL)
         
