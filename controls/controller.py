@@ -14,13 +14,13 @@ MAX_PULSE = 2400
 # Angles of joints when default offline (resting, not holding anything) and online (carrying the bottle)
 OFFLINE_DEFAULT_1 = 103
 OFFLINE_DEFAULT_2 = 180 
-OFFLINE_DEFAULT_3 = 60 #TODO to be tuned, then rested 
+OFFLINE_DEFAULT_3 = 60
 
-ONLINE_DEFAULT_2 = 180 #TODO be tuned, 
-ONLINE_DEFAULT_3 = None #TODO be tuned, 75, third arm is horizontal
+ONLINE_DEFAULT_2 = 180
+ONLINE_DEFAULT_3 = 110 #when online 2 = 180, 80 is horizontal 
 
 # Assumed position of the user
-USER_POSITION_1 = 180
+USER_POSITION_1 = 150
 
 class Controller:
     def __init__(self) -> None:
@@ -36,14 +36,13 @@ class Controller:
         index2 = 2 *4
         index3 = 3 *4
         
-        self.servos = [i for i in range(4)]
+        
         self.motor_ids = ['1', '2', '3', 'ee'] #ee for end-effector
+        self.servos = {k:None for k in self.motor_ids}
         self.servos['1'] = servo.Servo(self.pca.channels[index0], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
         self.servos['2'] = servo.Servo(self.pca.channels[index1], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
         self.servos['3'] = servo.Servo(self.pca.channels[index2], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
         self.servos['ee']= servo.Servo(self.pca.channels[index3], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
-        
-        self.open_ee()
 
         self.target_angle1 = None
         self.target_angle2 = None
@@ -68,12 +67,13 @@ class Controller:
         self.servos[motor_id].angle = None
         
     def all_motor_relax(self):
-        for id in self.motor_ids:
-            self.servos[id].angle = None
-            time.sleep(1)
+        for i in self.motor_ids:
+                print(i)
+                self.servos[i].angle = None
+                time.sleep(1)
 
     def open_ee(self):
-        self.servos['ee'] = 50 # max opening
+        self.servos['ee'].angle = 50 # max opening
 
     def close_ee(self):
-        self.servos['ee'] = 90 # max closing
+        self.servos['ee'].angle = 90 # max closing

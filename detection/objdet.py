@@ -3,7 +3,7 @@ import cv2
 import time
 from ultralytics import YOLO
 
-def obj_det(target_objs = [39, 75], conf_threshold = 0.5):
+def obj_det(target_objs = [39, 75], conf_threshold = 0.3):
     #Get all target objs that is 39 (bottle) or 75 (vase)
     model = YOLO("yolov8n.pt")  # load a pretrained model
 
@@ -31,6 +31,7 @@ def obj_det(target_objs = [39, 75], conf_threshold = 0.5):
         print(f"elapsed time: {end_time - start_time}")
         
         for index, obj in enumerate(objs):
+            print(obj, confs[index], target_objs )
             if obj in target_objs and confs[index] >= conf_threshold:
                 return obj, confs[index], pixel_coords[index]
 

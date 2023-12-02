@@ -16,13 +16,19 @@ def run_motor(servo_motor, target_angle, current_angle = None,  interval = 0.03)
         time.sleep(1)
         return
     
-    if current_angle != None: current_angle = servo_motor.angle
-
+    if current_angle == None: current_angle = servo_motor.angle
+    '''
     if not servo_motor.angle:
         if abs(current_angle - servo_motor.angle)>5:
             #If reading from servo motor is too different from each other
             raise ValueError('Flagging input current angle is not closed to readings from motor')
 
-    for i in range(current_angle, target_angle):
+    '''
+    
+    diff = int(target_angle) - int(current_angle)
+    step = int(diff/ abs(diff))
+    #print(int(current_angle), int(target_angle), step)
+    for i in range(int(current_angle), int(target_angle), step):
+        print(i)
         servo_motor.angle = i
         time.sleep(interval)

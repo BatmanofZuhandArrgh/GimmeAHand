@@ -17,7 +17,7 @@ def robot_coord_to_servo(coord_robot: CoordRobot):
 
     # Offsets
     servo1_offset = 103
-    servo2_offset = 160 # Not sure, the value is same as servo value that makes servo 1 go vertical
+    servo2_offset = 158 
     servo3_offset = 180
 
     servo1 = servo1_offset + turn_dir_1*theta_1
@@ -28,7 +28,7 @@ def robot_coord_to_servo(coord_robot: CoordRobot):
         return None
     if servo2 < 60 or servo2 > 180:
         return None
-    if servo3 < 40 or servo3 > 180:
+    if servo3 < 50 or servo3 > 180:
         return None
     
     return Servo(servo1, servo2, servo3)

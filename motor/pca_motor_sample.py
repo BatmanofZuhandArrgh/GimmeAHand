@@ -41,21 +41,46 @@ pca.frequency = 50
 # The pulse range is 750 - 2250 by default. This range typically gives 135 degrees of
 # range, but the default is to use 180 degrees. You can specify the expected range if you wish:
 # servo7 = servo.Servo(pca.channels[7], actuation_range=135)
-servo7 = servo.Servo(pca.channels[7])
+
+# 3 things to calib acturation_range = 180 (default), min_pulse 400 and max_pulse 2400 for MG9965R
+# max_pulse can go to 2500 or more
+MIN_PULSE = 400
+MAX_PULSE = 2400
+
+index1 = 0*4
+servo1 = servo.Servo(pca.channels[index1],  min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
+
+index2 = 2*4
+servo2 = servo.Servo(pca.channels[index2],  min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
 
 # We sleep in the loops to give the servo time to move into position.
+'''
 for i in range(180):
     servo7.angle = i
     time.sleep(0.03)
 for i in range(180):
     servo7.angle = 180 - i
     time.sleep(0.03)
+'''
+servo1.angle = 60
+time.sleep(2)
 
+#servo2.angle = 80
+time.sleep(2)
+
+print('here')
+
+servo1.angle = None
+
+servo2.angle = None
+
+
+'''
 # You can also specify the movement fractionally.
 fraction = 0.0
 while fraction < 1.0:
     servo7.fraction = fraction
     fraction += 0.01
     time.sleep(0.03)
-
+'''
 pca.deinit()

@@ -8,14 +8,14 @@ from controls.naive_controller import NaiveController
 from controls.planned_controller import PlannedController
 
 def run(
-	target_obj = 75,
-	conf_threshold = 0.5, 
+	target_objs = [39, 75],
+	conf_threshold = 0.25, 
 	target_depth = 200,
 	planning = "naive",
 ):
 	
 	###1. Object Detection: Loops end when detected first vase/bottle
-	detected_obj = obj_det(target_obj = target_obj, conf_threshold = conf_threshold)
+	detected_obj = obj_det(target_objs = target_objs, conf_threshold = conf_threshold)
 
 	###2. Coordinate conversion: Convert object's coordinate to robot's world coordinate
 	u1, v1, u2, v2 = detected_obj[2]
@@ -33,7 +33,7 @@ def run(
 	robot_coord_transformer = RobotCoordTransformer()
 	robot_coord = robot_coord_transformer.world_to_robot_coord(world_coord)
 	print(robot_coord)
-	if not robot_coord_transformer.is_above_ground():
+	if not robot_coord_transformer.is_above_ground(robot_coord):
 		return "Object unattainable by the robot's configuration"
 
 	###4. Target Motor Angle: From target robot angles in kinematics, infer target angles to be input in motors
@@ -49,8 +49,7 @@ def run(
 		# controller = PlannedController(sequence)
 		raise NotImplemented
 	
-	controller.execute()
-	
+	controller.execute(servo_angles)
 	print('Donezo')
 	
 if __name__ == "__main__":
