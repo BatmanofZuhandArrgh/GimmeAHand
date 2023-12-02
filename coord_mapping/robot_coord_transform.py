@@ -66,8 +66,13 @@ class RobotCoordTransformer:
 
     def is_above_ground(self, robot_coord: CoordRobot) -> bool:
         """check if robot config coord is above ground"""
-        world_coord = self.robot_to_world_coord(robot_coord)
-        return world_coord.y >= 0
+        phi_1 = robot_coord.theta_2 + 90.0
+        phi_2 = phi_1 - robot_coord.theta_3
+        a = RobotDHParams.a(2)
+        b = RobotDHParams.a(3)
+        y3 = RobotDHParams.d(2) + RobotDHParams.d(1) + a * np.sin(np.deg2rad(phi_1))
+        y = y3 + b * np.sin(np.deg2rad(phi_2))
+        return (y3 >= 0) and (y >= 0)
 
 
 if __name__ == "__main__":
