@@ -74,6 +74,19 @@ class RobotCoordTransformer:
         y = y3 + b * np.sin(np.deg2rad(phi_2))
         return (y3 >= 0) and (y >= 0)
 
+    def generate_intermediate_coords(self, start: CoordRobot, end: CoordRobot, num_interval: int = 10) -> list[CoordRobot]:
+        """generate intermediate points to move the robot"""
+        result = [start]
+        for i in range(1, num_interval):
+            coord = CoordRobot(
+                start.theta_1 + (end.theta_1 - start.theta_1) * i / num_interval,
+                start.theta_2 + (end.theta_2 - start.theta_2) * i / num_interval,
+                start.theta_3 + (end.theta_3 - start.theta_3) * i / num_interval,
+            )
+            result.append(coord)
+        result.append(end)
+        return result
+
 
 if __name__ == "__main__":
     robot_coord_transformer = RobotCoordTransformer()
