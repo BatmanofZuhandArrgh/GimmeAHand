@@ -16,7 +16,7 @@ def robot_coord_to_servo(coord_robot: CoordRobot):
     turn_dir_3 = -1
 
     # Offsets
-    servo1_offset = 103
+    servo1_offset =  98 #103
     servo2_offset = 158 
     servo3_offset = 180
 
@@ -24,11 +24,11 @@ def robot_coord_to_servo(coord_robot: CoordRobot):
     servo2 = servo2_offset + turn_dir_2*theta_2
     servo3 = servo3_offset + turn_dir_3*theta_3
 
-    if servo1 < 0 or servo1 > 180:
+    if servo1 < 0 or servo1 > 208:
         return None
-    if servo2 < 60 or servo2 > 180:
+    if servo2 < 60 or servo2 > 208:
         return None
-    if servo3 < 50 or servo3 > 180:
+    if servo3 < 30 or servo3 > 208:
         return None
     
     return Servo(servo1, servo2, servo3)

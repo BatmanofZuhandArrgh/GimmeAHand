@@ -10,7 +10,7 @@ from controls.controls_utils import run_motor
 from motor.motor_utils import Servo #, robot_coord_to_servo
 #from coord_mapping.robot_coord_transform import RobotCoordTransformer
 
-INTERVAL = 2 #seconds
+INTERVAL = 0.5 #seconds
 
 #Assume no obstruction except for ground
 class NaiveController(Controller):
@@ -29,9 +29,9 @@ class NaiveController(Controller):
         seg_seq_3 = []
         for i in range(0, num_intervals):
             seg_seq_2.append(ONLINE_DEFAULT_2 + (self.target_angle2 -  ONLINE_DEFAULT_2)*i/num_intervals)
-            time.sleep(1)
+            time.sleep(0.1)
             seg_seq_3.append(ONLINE_DEFAULT_3 + (self.target_angle3 -  ONLINE_DEFAULT_3)*i/num_intervals)
-            time.sleep(1)
+            time.sleep(0.1)
             
         seg_seq_2.append(self.target_angle2)
         seg_seq_3.append(self.target_angle3)
@@ -40,9 +40,9 @@ class NaiveController(Controller):
         
         for i in range(len(seg_seq_2)-1):
                 run_motor(self.servos['3'], target_angle=seg_seq_3[i+1], current_angle=seg_seq_3[i], interval = 0.05)
-                time.sleep(0.5)
+                time.sleep(0.1)
                 run_motor(self.servos['2'], target_angle=seg_seq_2[i+1], current_angle=seg_seq_2[i], interval = 0.05)
-                time.sleep(0.5)
+                time.sleep(0.1)
                 
     def naive_reach(self):
         # From the offline default position 2 and 3, reach towards the target obj
@@ -82,14 +82,15 @@ class NaiveController(Controller):
         '''
         run_motor(self.servos['1'], target_angle=USER_POSITION_1)
         '''
-        
-        self.servos['3'].angle = 55
+        self.servos['3'].angle = 70
+        self.servos['2'].angle = 90
         time.sleep(INTERVAL)
         #self.servos['3'].angle = None
         #time.sleep(3 * INTERVAL)
         self.open_ee()
         time.sleep(INTERVAL)
         
+        self.servos['2'].angle = ONLINE_DEFAULT_2
         self.servos['3'].angle = ONLINE_DEFAULT_3
         time.sleep(INTERVAL +1)
     

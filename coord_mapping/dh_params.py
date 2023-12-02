@@ -13,7 +13,7 @@ class RobotDHParams:
         DHParams(a = 39.56, alpha =   0.0, d = 50.4),
         DHParams(a =  21.0, alpha =  90.0, d = 13.0),
         DHParams(a = 100.0, alpha = 180.0, d =  0.0),
-        DHParams(a = 250, alpha =   0.0, d =  0.0), #TODO: may have to readjust, full length 262.9, 207.9 from z3 to point-of-contact with obj to be grasped
+        DHParams(a = 240, alpha =   0.0, d =  0.0), #TODO: may have to readjust, full length 262.9, 207.9 from z3 to point-of-contact with obj to be grasped
     ]
 
     @staticmethod

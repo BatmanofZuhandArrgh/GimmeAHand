@@ -45,13 +45,15 @@ pca.frequency = 50
 # 3 things to calib acturation_range = 180 (default), min_pulse 400 and max_pulse 2400 for MG9965R
 # max_pulse can go to 2500 or more
 MIN_PULSE = 400
-MAX_PULSE = 2400
+ONEEIGHTY_PULSE = 2400
+MAX_PULSE = 2700
+MAX_DEGREE = 208
 
-index1 = 0*4
-servo1 = servo.Servo(pca.channels[index1],  min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
+index1 = 2
+servo1 = servo.Servo(pca.channels[index1],  min_pulse=MIN_PULSE, max_pulse=MAX_PULSE, actuation_range=MAX_DEGREE)
 
-index2 = 2*4
-servo2 = servo.Servo(pca.channels[index2],  min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
+index2 = 2
+servo2 = servo.Servo(pca.channels[index2],  min_pulse=MIN_PULSE, max_pulse=ONEEIGHTY_PULSE)
 
 # We sleep in the loops to give the servo time to move into position.
 '''
@@ -62,8 +64,18 @@ for i in range(180):
     servo7.angle = 180 - i
     time.sleep(0.03)
 '''
-servo1.angle = 60
+servo1.angle = 0
 time.sleep(2)
+servo1.angle = MAX_DEGREE
+time.sleep(2)
+servo1.angle = 180
+time.sleep(2)
+servo2.angle = 180
+time.sleep(2)
+servo2.angle = 0
+time.sleep(2)
+servo1.angle = 0
+
 
 #servo2.angle = 80
 time.sleep(2)
@@ -72,7 +84,7 @@ print('here')
 
 servo1.angle = None
 
-servo2.angle = None
+#servo2.angle = None
 
 
 '''

@@ -9,15 +9,16 @@ from adafruit_motor import servo
 from adafruit_pca9685 import PCA9685
 
 MIN_PULSE = 400
-MAX_PULSE = 2400
+MAX_PULSE = 2700 #2400
+MAX_DEGREE = 208
 
 # Angles of joints when default offline (resting, not holding anything) and online (carrying the bottle)
 OFFLINE_DEFAULT_1 = 103
-OFFLINE_DEFAULT_2 = 180 
+OFFLINE_DEFAULT_2 = 180
 OFFLINE_DEFAULT_3 = 60
 
-ONLINE_DEFAULT_2 = 180
-ONLINE_DEFAULT_3 = 110 #when online 2 = 180, 80 is horizontal 
+ONLINE_DEFAULT_2 = 208 #180
+ONLINE_DEFAULT_3 = 80 #110 #when online 2 = 180, 80 is horizontal 
 
 # Assumed position of the user
 USER_POSITION_1 = 150
@@ -39,10 +40,10 @@ class Controller:
         
         self.motor_ids = ['1', '2', '3', 'ee'] #ee for end-effector
         self.servos = {k:None for k in self.motor_ids}
-        self.servos['1'] = servo.Servo(self.pca.channels[index0], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
-        self.servos['2'] = servo.Servo(self.pca.channels[index1], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
-        self.servos['3'] = servo.Servo(self.pca.channels[index2], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
-        self.servos['ee']= servo.Servo(self.pca.channels[index3], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE)
+        self.servos['1'] = servo.Servo(self.pca.channels[index0], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE, actuation_range=MAX_DEGREE)
+        self.servos['2'] = servo.Servo(self.pca.channels[index1], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE, actuation_range=MAX_DEGREE)
+        self.servos['3'] = servo.Servo(self.pca.channels[index2], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE, actuation_range=MAX_DEGREE)
+        self.servos['ee']= servo.Servo(self.pca.channels[index3], min_pulse=MIN_PULSE, max_pulse=MAX_PULSE, actuation_range=MAX_DEGREE)
 
         self.target_angle1 = None
         self.target_angle2 = None

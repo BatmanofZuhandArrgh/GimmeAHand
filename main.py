@@ -40,7 +40,7 @@ def run(
 	servo_angles = robot_coord_to_servo(robot_coord)
 	print(servo_angles)
 	
-	
+	#servo_angles.servo1 -= 7
 	###5. Execute
 	if planning == 'naive':
 		controller = NaiveController()
