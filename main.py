@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from detection.objdet import obj_det
 from coord_mapping.coord import CoordPixel, Coord3D, CoordRobot #Probably find a way to clean this up
 from coord_mapping.cam_coord_transform import CamCoordTransformer
@@ -7,15 +8,37 @@ from motor.motor_utils import robot_coord_to_servo
 from controls.naive_controller import NaiveController
 from controls.planned_controller import PlannedController
 
+def save_pred(
+		txt_file,
+		detected_obj,
+		pixel_coord,
+		world_coord,
+		robot_coord,
+		):
+	with open(txt_file, 'w') as f:
+		objs, confs, xyxys, classes = detected_obj
+		f.write(f'objs : {str(objs)} \n')
+		f.write(f'cls  : {str(classes)} \n')
+		f.write(f'confs: {[str(conf) for conf in confs]} \n')
+		for index, xyxy in enumerate(xyxys):
+			f.write(f'xyxy{index}: {[str(coord)+ " " for coord in xyxy]} \n')
+
+		f.write('\n')
+		f.write(f'pixel_coord: {str(pixel_coord.u)} {str(pixel_coord.v)} \n')
+		f.write(f'world_coord: {str(world_coord.x)} {str(world_coord.y)} {str(world_coord.z)} \n')
+		f.write(f'robot_coord: {str(robot_coord.theta1)} {str(robot_coord.theta2)} {str(robot_coord.theta3)} \n')
+
 def run(
 	target_objs = [39, 75],
 	conf_threshold = 0.25, 
 	target_depth = 200,
 	planning = "naive",
 ):
-	
+	run_folder = os.path.join('runs', datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) 
+	os.makedirs(run_folder, exist_ok=True)
+
 	###1. Object Detection: Loops end when detected first vase/bottle
-	detected_obj = obj_det(target_objs = target_objs, conf_threshold = conf_threshold)
+	detected_obj = obj_det(target_objs = target_objs, conf_threshold = conf_threshold, folder=run_folder)
 
 	###2. Coordinate conversion: Convert object's coordinate to robot's world coordinate
 	u1, v1, u2, v2 = detected_obj[2]
@@ -33,11 +56,22 @@ def run(
 	robot_coord_transformer = RobotCoordTransformer()
 	robot_coord = robot_coord_transformer.world_to_robot_coord(world_coord)
 	print(robot_coord)
+		
+	save_pred(
+		txt_file=os.path.join(run_folder, 'predicted.txt'),
+		detected_obj = detected_obj,
+		pixel_coord = pixel_coord,
+		world_coord = world_coord,
+		robot_coord = robot_coord,
+		)	
+		
 	if not robot_coord_transformer.is_above_ground(robot_coord):
 		return "Object unattainable by the robot's configuration"
 
 	###4. Target Motor Angle: From target robot angles in kinematics, infer target angles to be input in motors
 	servo_angles = robot_coord_to_servo(robot_coord)
+	with open(os.path.join(run_folder, 'predicted.txt'), 'a') as f:
+		f.write(f'motor_input:  {str(servo_angles.servo1)} {str(servo_angles.servo2)} {str(servo_angles.servo3)} \n')
 	print(servo_angles)
 	
 	#servo_angles.servo1 -= 7
