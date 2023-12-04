@@ -16,17 +16,16 @@ def save_pred(
 		robot_coord,
 		):
 	with open(txt_file, 'w') as f:
-		objs, confs, xyxys, classes = detected_obj
-		f.write(f'objs : {str(objs)} \n')
-		f.write(f'cls  : {str(classes)} \n')
-		f.write(f'confs: {[str(conf) for conf in confs]} \n')
-		for index, xyxy in enumerate(xyxys):
-			f.write(f'xyxy{index}: {[str(coord)+ " " for coord in xyxy]} \n')
+		obj, conf, xyxy, cls = detected_obj
+		f.write(f'objs : {str(obj)} \n')
+		f.write(f'cls  : {str(cls)} \n')
+		f.write(f'confs: {conf} \n')
+		f.write(f'xyxy: {xyxy} \n')
 
 		f.write('\n')
 		f.write(f'pixel_coord: {str(pixel_coord.u)} {str(pixel_coord.v)} \n')
 		f.write(f'world_coord: {str(world_coord.x)} {str(world_coord.y)} {str(world_coord.z)} \n')
-		f.write(f'robot_coord: {str(robot_coord.theta1)} {str(robot_coord.theta2)} {str(robot_coord.theta3)} \n')
+		f.write(f'robot_coord: {str(robot_coord.theta_1)} {str(robot_coord.theta_2)} {str(robot_coord.theta_3)} \n')
 
 def run(
 	target_objs = [39, 75],
@@ -74,7 +73,7 @@ def run(
 		f.write(f'motor_input:  {str(servo_angles.servo1)} {str(servo_angles.servo2)} {str(servo_angles.servo3)} \n')
 	print(servo_angles)
 	
-	#servo_angles.servo1 -= 7
+	'''
 	###5. Execute
 	if planning == 'naive':
 		controller = NaiveController()
@@ -84,6 +83,8 @@ def run(
 		raise NotImplemented
 	
 	controller.execute(servo_angles)
+	'''
+	
 	print('Donezo')
 	
 if __name__ == "__main__":
