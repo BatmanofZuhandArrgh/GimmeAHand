@@ -1,5 +1,7 @@
 # GimmeAHand
-This is the implementation of the a module to bottle or vase with a robot arm and deliver it to the person. For the details on the project see ```documents/full_report.pdf```. For the demos, see [Naive Controls](https://www.youtube.com/watch?v=7ggjaEWMQIM&t=6s) and [Segmented Controls](https://www.youtube.com/watch?v=T55dUDQz37s).
+This is the implementation of a module to use Rasberry Pi to control a robot arm to grasp a bottle or vase and deliver it to the user. For the details on the project see ```documents/full_report.pdf```. For the demos, see [Naive Controls](https://www.youtube.com/watch?v=7ggjaEWMQIM&t=6s) and [Segmented Controls](https://www.youtube.com/watch?v=T55dUDQz37s).
+
+![Full flow](./documents/flowchart_subgoal.drawio.png)
 
 # Install
 This repo is installed on a Rasberry Pi 4B 8G, Debian OS 64bit. 
