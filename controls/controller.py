@@ -1,6 +1,6 @@
 import time
 
-from board import SCL, SDA
+# from board import SCL, SDA
 import busio
 
 from motor.motor_utils import Servo
@@ -23,8 +23,12 @@ ONLINE_DEFAULT_3 = 80 #110 #when online 2 = 180, 80 is horizontal
 # Assumed position of the user
 USER_POSITION_1 = 150
 
+INTERVAL = 0.5 #seconds
+
 class Controller:
     def __init__(self) -> None:
+        return
+
         #See pca_motor_test for specifics
         i2c = busio.I2C(SCL, SDA)
         
@@ -48,6 +52,10 @@ class Controller:
         self.target_angle1 = None
         self.target_angle2 = None
         self.target_angle3 = None
+
+    def get_angles(self):
+        for key in self.servos:
+            print('Servo ', key, self.servos[key].angle, ' degrees')
 
     def reset(self):
         pass
@@ -78,3 +86,29 @@ class Controller:
 
     def close_ee(self):
         self.servos['ee'].angle = 90 # max closing
+
+    def go_online(self):
+        self.servos['2'].angle = ONLINE_DEFAULT_2
+        time.sleep(INTERVAL)
+        
+        self.servos['3'].angle = ONLINE_DEFAULT_3
+        time.sleep(INTERVAL)
+        
+        self.servos['1'].angle = OFFLINE_DEFAULT_1
+        time.sleep(INTERVAL)    
+
+    def go_offline(self):
+        #From any (simple) position, back to offline default position from any position
+        #Possibly causes huge torque requirements at servo 2, really bad
+        
+        self.servos['3'].angle = OFFLINE_DEFAULT_3
+        time.sleep(INTERVAL)
+        
+        self.servos['2'].angle = OFFLINE_DEFAULT_2
+        time.sleep(INTERVAL)
+        
+        self.servos['1'].angle = OFFLINE_DEFAULT_1
+        time.sleep(INTERVAL)
+        
+        self.close_ee()
+        time.sleep(INTERVAL)

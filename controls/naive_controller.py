@@ -5,12 +5,11 @@ print('path: ', sys.path[-1])
 
 import time
 from controls.controller import Controller, OFFLINE_DEFAULT_1, OFFLINE_DEFAULT_2, OFFLINE_DEFAULT_3, \
-    ONLINE_DEFAULT_2, ONLINE_DEFAULT_3, USER_POSITION_1
+    ONLINE_DEFAULT_2, ONLINE_DEFAULT_3, USER_POSITION_1, INTERVAL
 from controls.controls_utils import run_motor
 from motor.motor_utils import Servo #, robot_coord_to_servo
 #from coord_mapping.robot_coord_transform import RobotCoordTransformer
 
-INTERVAL = 0.5 #seconds
 
 #Assume no obstruction except for ground
 class NaiveController(Controller):
@@ -103,33 +102,7 @@ class NaiveController(Controller):
         '''
         run_motor(self.servos['1'], target_angle=OFFLINE_DEFAULT_1)
         '''
-        self.all_motor_relax()
 
-    def go_offline(self):
-        #From any (simple) position, back to offline default position from any position
-        #Possibly causes huge torque requirements at servo 2, really bad
-        
-        self.servos['3'].angle = OFFLINE_DEFAULT_3
-        time.sleep(INTERVAL)
-        
-        self.servos['2'].angle = OFFLINE_DEFAULT_2
-        time.sleep(INTERVAL)
-        
-        self.servos['1'].angle = OFFLINE_DEFAULT_1
-        time.sleep(INTERVAL)
-        
-        self.close_ee()
-        time.sleep(INTERVAL)
-
-    def go_online(self):
-        self.servos['2'].angle = ONLINE_DEFAULT_2
-        time.sleep(INTERVAL)
-        
-        self.servos['3'].angle = ONLINE_DEFAULT_3
-        time.sleep(INTERVAL)
-        
-        self.servos['1'].angle = OFFLINE_DEFAULT_1
-        time.sleep(INTERVAL)     
         
     def execute(self, servo_angles: Servo):
         super().execute(servo_angles)
