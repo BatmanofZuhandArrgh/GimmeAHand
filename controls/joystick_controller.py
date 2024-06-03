@@ -7,7 +7,7 @@ ROTATION_SPEED = 2 # degrees per second
 class JoystickController(Controller):
     def __init__(self) -> None:
         super().__init__()
-
+        print('init')
         self.joystick = None
         self.joystick_init() 
         self.show_manual()
@@ -16,7 +16,7 @@ class JoystickController(Controller):
         self.buttons = [0 for x in range(10)]
 
         self.motor_counter = [0 for x in range(4)]
-
+        
     def show_manual(self):
         print("==================================")
         print('Manual:')
@@ -49,91 +49,99 @@ class JoystickController(Controller):
 
     def manual_control(self):
         self.go_online()
-
         running = True
-        while running:
-            # Handle events
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+        try:
+            while running:
+                # Handle events
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
+
+                # Read joystick input
+                for i in range(self.joystick.get_numaxes()):
+                    axis = self.joystick.get_axis(i)
+                    # print(f"Axis {i}: {axis}")   
+
+                    if i == 1 and axis <-0.5: #Up
+                        self.axes[2] = 1
+                    elif i == 1 and axis > 0.5: #Down
+                        self.axes[3] = 1
+                    elif i == 0 and axis <-0.5: #Left
+                        self.axes[0] = 1
+                        break
+                    elif i == 0 and axis > 0.5: #Right
+                        self.axes[1] = 1
+                        break
+                    else: 
+                        self.axes = [0 for x in range(4)]
+                # print(f"Axes: {self.axes}: Up Down Left Right")
+
+                for i in range(self.joystick.get_numbuttons()):
+                    button = self.joystick.get_button(i)
+                    self.buttons[i] = button
+                # print(f"Buttons: {self.buttons}")
+
+                # Add a small delay to avoid maxing out CPU
+                pygame.time.delay(100) #1 second per input
+
+                #Escape game
+                if self.buttons[8] == 1:
                     running = False
+                    self.joystick_quit()
+                    
+                    self.go_offline()
+                    self.all_motor_relax()
+                    self.end_routine()
 
-            # Read joystick input
-            for i in range(self.joystick.get_numaxes()):
-                axis = self.joystick.get_axis(i)
-                # print(f"Axis {i}: {axis}")   
-
-                if i == 1 and axis <-0.5: #Up
-                    self.axes[2] = 1
-                elif i == 1 and axis > 0.5: #Down
-                    self.axes[3] = 1
-                elif i == 0 and axis <-0.5: #Left
-                    self.axes[0] = 1
+                    print('Escape')
                     break
-                elif i == 0 and axis > 0.5: #Right
-                    self.axes[1] = 1
-                    break
-                else: 
-                    self.axes = [0 for x in range(4)]
-            # print(f"Axes: {self.axes}: Up Down Left Right")
-
-            for i in range(self.joystick.get_numbuttons()):
-                button = self.joystick.get_button(i)
-                self.buttons[i] = button
-            # print(f"Buttons: {self.buttons}")
-
-            # Add a small delay to avoid maxing out CPU
-            pygame.time.delay(100) #1 second per input
-
-            #Escape game
-            if self.buttons[8] == 1:
-                running = False
-                self.joystick_quit()
                 
-                self.go_offline()
-                self.all_motor_relax()
-                self.end_routine()
+                #Servo 1
+                if self.axes[0] == 1:
+                    self.motor_counter[0] -= 1  
+                    self.servos['1'].angle -= ROTATION_SPEED
+                elif self.axes[1] == 1:
+                    self.motor_counter[0] += 1 
+                    self.servos['1'].angle += ROTATION_SPEED
 
-                print('Escape')
-                break
+                #Servo 2
+                if self.axes[2] == 1:
+                    self.motor_counter[1] += 1      
+                    self.servos['2'].angle += ROTATION_SPEED      
+                elif self.axes[3] == 1:
+                    self.motor_counter[1] -= 1
+                    self.servos['2'].angle -= ROTATION_SPEED
+
+                #Servo 3
+                if self.buttons[0] == 1:
+                    self.motor_counter[2] += 1
+                    self.servos['3'].angle += ROTATION_SPEED            
+                elif self.buttons[2] == 1:
+                    self.motor_counter[2] -= 1 
+                    self.servos['3'].angle -= ROTATION_SPEED
+
+                #EE
+                if self.buttons[1] == 1: #Open
+                    self.motor_counter[3] += 1
+                    cur_angle = self.servos['ee'].angle 
+                    self.servos['ee'].angle = cur_angle - ROTATION_SPEED if cur_angle > 50 + ROTATION_SPEED else cur_angle
+                
+                elif self.buttons[3] == 1: #Close
+                    self.motor_counter[3] -= 1 
+                    cur_angle = self.servos['ee'].angle 
+                    self.servos['ee'].angle = cur_angle + ROTATION_SPEED if cur_angle < 90 - ROTATION_SPEED else cur_angle
+
+                print(self.motor_counter)
+                self.get_angles()
+                print('========================')
+        except Exception as e:
+            print(e)
+            self.joystick_quit()
             
-            #Servo 1
-            if self.axes[0] == 1:
-                self.motor_counter[0] -= 1  
-                self.servos['1'].angle -= ROTATION_SPEED
-            elif self.axes[1] == 1:
-                self.motor_counter[0] += 1 
-                self.servos['1'].angle += ROTATION_SPEED
-
-            #Servo 2
-            if self.axes[2] == 1:
-                self.motor_counter[1] += 1      
-                self.servos['2'].angle += ROTATION_SPEED      
-            elif self.axes[3] == 1:
-                self.motor_counter[1] -= 1
-                self.servos['2'].angle -= ROTATION_SPEED
-
-            #Servo 3
-            if self.buttons[0] == 1:
-                self.motor_counter[2] += 1
-                self.servos['3'].angle += ROTATION_SPEED            
-            elif self.buttons[2] == 1:
-                self.motor_counter[2] -= 1 
-                self.servos['3'].angle -= ROTATION_SPEED
-
-            #EE
-            if self.buttons[1] == 1: #Open
-                self.motor_counter[3] += 1
-                cur_angle = self.servos['ee'].angle 
-                self.servos['ee'].angle = cur_angle - ROTATION_SPEED if cur_angle > 50 + ROTATION_SPEED else cur_angle
+            self.go_offline()
+            self.all_motor_relax()
             
-            elif self.buttons[3] == 1: #Close
-                self.motor_counter[3] -= 1 
-                cur_angle = self.servos['ee'].angle 
-                self.servos['ee'].angle = cur_angle + ROTATION_SPEED if cur_angle < 90 - ROTATION_SPEED else cur_angle
-
-            print(self.motor_counter)
-            print('========================')
-
+            self.end_routine()
 if __name__ == '__main__':
     controller = JoystickController()
     controller.manual_control()

@@ -1,6 +1,6 @@
 import time
 
-# from board import SCL, SDA
+from board import SCL, SDA
 import busio
 
 from motor.motor_utils import Servo
@@ -16,9 +16,11 @@ MAX_DEGREE = 208
 OFFLINE_DEFAULT_1 = 103
 OFFLINE_DEFAULT_2 = 180
 OFFLINE_DEFAULT_3 = 60
+OFFLINE_DEFAULT_4 = 75
 
 ONLINE_DEFAULT_2 = 208 #180
 ONLINE_DEFAULT_3 = 80 #110 #when online 2 = 180, 80 is horizontal 
+ONLINE_DEFAULT_4 = 75
 
 # Assumed position of the user
 USER_POSITION_1 = 150
@@ -27,7 +29,6 @@ INTERVAL = 0.5 #seconds
 
 class Controller:
     def __init__(self) -> None:
-        return
 
         #See pca_motor_test for specifics
         i2c = busio.I2C(SCL, SDA)
@@ -95,6 +96,9 @@ class Controller:
         time.sleep(INTERVAL)
         
         self.servos['1'].angle = OFFLINE_DEFAULT_1
+        time.sleep(INTERVAL)    
+        
+        self.open_ee()
         time.sleep(INTERVAL)    
 
     def go_offline(self):

@@ -67,13 +67,13 @@ def run(
 	if not robot_coord_transformer.is_above_ground(robot_coord):
 		return "Object unattainable by the robot's configuration"
 
+	'''
 	###4. Target Motor Angle: From target robot angles in kinematics, infer target angles to be input in motors
 	servo_angles = robot_coord_to_servo(robot_coord)
 	with open(os.path.join(run_folder, 'predicted.txt'), 'a') as f:
 		f.write(f'motor_input:  {str(servo_angles.servo1)} {str(servo_angles.servo2)} {str(servo_angles.servo3)} \n')
 	print(servo_angles)
-	
-	'''
+
 	###5. Execute
 	if planning == 'naive':
 		controller = NaiveController()
@@ -84,8 +84,8 @@ def run(
 	
 	controller.execute(servo_angles)
 	'''
-	
+
 	print('Donezo')
 	
 if __name__ == "__main__":
-	run()
+	run(target_depth=361)
