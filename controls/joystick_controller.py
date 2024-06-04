@@ -2,7 +2,10 @@ import pygame
 from controls.controller import Controller
 from controls.controls_utils import run_motor
 
-ROTATION_SPEED = 2 # degrees per second
+ROTATION_SPEED = 3 # degrees per second
+MAX_DEGREE = 205
+MIN_DEGREE = 1
+
 
 class JoystickController(Controller):
     def __init__(self) -> None:
@@ -99,26 +102,26 @@ class JoystickController(Controller):
                 #Servo 1
                 if self.axes[0] == 1:
                     self.motor_counter[0] -= 1  
-                    self.servos['1'].angle -= ROTATION_SPEED
+                    self.servos['1'].angle = max(self.servos['1'].angle - ROTATION_SPEED, MIN_DEGREE)
                 elif self.axes[1] == 1:
                     self.motor_counter[0] += 1 
-                    self.servos['1'].angle += ROTATION_SPEED
+                    self.servos['1'].angle = min(self.servos['1'].angle + ROTATION_SPEED, MAX_DEGREE)
 
                 #Servo 2
                 if self.axes[2] == 1:
                     self.motor_counter[1] += 1      
-                    self.servos['2'].angle += ROTATION_SPEED      
+                    self.servos['2'].angle =  min(self.servos['2'].angle + ROTATION_SPEED, MAX_DEGREE)      
                 elif self.axes[3] == 1:
                     self.motor_counter[1] -= 1
-                    self.servos['2'].angle -= ROTATION_SPEED
+                    self.servos['2'].angle = max(self.servos['2'].angle - ROTATION_SPEED, MIN_DEGREE)
 
                 #Servo 3
                 if self.buttons[0] == 1:
                     self.motor_counter[2] += 1
-                    self.servos['3'].angle += ROTATION_SPEED            
+                    self.servos['3'].angle = min(self.servos['3'].angle + ROTATION_SPEED, MAX_DEGREE)            
                 elif self.buttons[2] == 1:
                     self.motor_counter[2] -= 1 
-                    self.servos['3'].angle -= ROTATION_SPEED
+                    self.servos['3'].angle = max(self.servos['3'].angle - ROTATION_SPEED, MIN_DEGREE)
 
                 #EE
                 if self.buttons[1] == 1: #Open
